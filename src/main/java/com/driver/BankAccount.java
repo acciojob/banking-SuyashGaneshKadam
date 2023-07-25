@@ -38,21 +38,21 @@ public class BankAccount {
         {
             throw new Exception("Account Number can not be generated");
         }
-        char[] arr = new char[digits-1];
+        String accountNumber = "";
         for(int i=0 ; i<digits ; i++)
         {
             if(sum > 9)
             {
-                arr[i] = '9';
+                accountNumber += 9;
                 sum -= 9;
             }
             else
             {
-                arr[i] = (char)sum;
+                accountNumber += sum;
                 sum = 0;
             }
         }
-        return arr.toString();
+        return accountNumber;
     }
 
     public void deposit(double amount) {
