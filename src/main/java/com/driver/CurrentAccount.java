@@ -24,20 +24,60 @@ public class CurrentAccount extends BankAccount{
         // If it is not possible, throw "Valid License can not be generated" Exception
         int n = this.tradeLicenseId.length();
         boolean isValid = true;
-        for(int i=0 ; i<n-1 ; i++)
+        int[] charFreq = new int[26];
+        int maxFreq = Integer.MIN_VALUE;
+        for(int i=0 ; i<n ; i++)
         {
-            if(this.tradeLicenseId.charAt(i) == this.tradeLicenseId.charAt(i+1))
+            charFreq[tradeLicenseId.charAt(i) - 'A']++;
+            maxFreq = Math.max(maxFreq, charFreq[tradeLicenseId.charAt(i) - 'A']);
+            if(isValid && i != n-1 && this.tradeLicenseId.charAt(i) == this.tradeLicenseId.charAt(i+1))
             {
                 isValid = false;
             }
         }
-        if(isValid)
+        if(!isValid)
         {
-            return;
-        }
-        else
-        {
-
+            if(((n + 1) / 2) < maxFreq)
+            {
+                throw new Exception("Valid License can not be generated");
+            }
+            else
+            {
+                int idx = 0;
+                boolean isEven = true;
+                char[] arr = new char[n];
+                for(int i=0 ; i<26 ; i++)
+                {
+                    int freq = charFreq[i];
+                    while(freq > 0)
+                    {
+                        while(arr[idx] >= 'A' && arr[idx] <= 'Z')
+                        {
+                            idx += 2;
+                            if(idx >= n)
+                            {
+                                if(isEven)
+                                {
+                                    isEven = false;
+                                    idx = 1;
+                                }
+                                else
+                                {
+                                    isEven = true;
+                                    idx = 0;
+                                }
+                            }
+                        }
+                        arr[idx] = (char)('A' + i);
+                        freq--;
+                    }
+                }
+                this.tradeLicenseId = "";
+                for(int i=0 ; i<n ; i++)
+                {
+                    this.tradeLicenseId += arr[i];
+                }
+            }
         }
     }
 
