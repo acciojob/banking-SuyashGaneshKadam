@@ -1,5 +1,7 @@
 package com.driver;
 
+import java.util.*;
+
 public class CurrentAccount extends BankAccount{
     String tradeLicenseId; //consists of Uppercase English characters only
 
@@ -24,11 +26,14 @@ public class CurrentAccount extends BankAccount{
         // If it is not possible, throw "Valid License can not be generated" Exception
         int n = this.tradeLicenseId.length();
         boolean isValid = true;
-        int[] charFreq = new int[26];
+        Integer[] charFreq = new Integer[26];
+        Arrays.fill(charFreq, 0);
+        HashMap<Character, Integer> map = new HashMap<>();
         int maxFreq = Integer.MIN_VALUE;
         for(int i=0 ; i<n ; i++)
         {
             charFreq[tradeLicenseId.charAt(i) - 'A']++;
+            map.put(tradeLicenseId.charAt(i), map.getOrDefault(tradeLicenseId.charAt(i), 0) + 1);
             maxFreq = Math.max(maxFreq, charFreq[tradeLicenseId.charAt(i) - 'A']);
             if(isValid && i != n-1 && this.tradeLicenseId.charAt(i) == this.tradeLicenseId.charAt(i+1))
             {
@@ -43,11 +48,21 @@ public class CurrentAccount extends BankAccount{
             }
             else
             {
+                Arrays.sort(charFreq, Collections.reverseOrder());
                 int idx = 0;
                 boolean isEven = true;
                 char[] arr = new char[n];
                 for(int i=0 ; i<26 ; i++)
                 {
+                    char ch = 'A';
+                    for(char c : map.keySet())
+                    {
+                        if(map.get(c) == charFreq[i])
+                        {
+                            ch = c;
+                            break;
+                        }
+                    }
                     int freq = charFreq[i];
                     while(freq > 0)
                     {
@@ -68,8 +83,12 @@ public class CurrentAccount extends BankAccount{
                                 }
                             }
                         }
-                        arr[idx] = (char)('A' + i);
+                        arr[idx] = ch;
                         freq--;
+                    }
+                    if(map.containsKey(ch))
+                    {
+                        map.remove(ch);
                     }
                 }
                 this.tradeLicenseId = "";
